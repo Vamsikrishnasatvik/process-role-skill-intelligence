@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 from app.core.config import DATABASE_URL
 
@@ -17,7 +17,7 @@ SessionLocal = sessionmaker(
 
 
 def get_db():
-    db = SessionLocal()
+    db: Session = SessionLocal()
 
     try:
         yield db
