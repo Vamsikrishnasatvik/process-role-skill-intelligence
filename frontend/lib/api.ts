@@ -229,3 +229,22 @@ export async function getEvidence(
     `/api/evidence/${entityType}/${entityId}`
   );
 }
+
+/* =========================================================
+   Global Search
+   ========================================================= */
+
+export type SearchResult = {
+  id: string;
+  type: "activity" | "process" | "role" | "skill" | "ai_opportunity";
+  name: string;
+  description: string | null;
+};
+
+export async function searchGraph(
+  query: string
+): Promise<SearchResult[]> {
+  return apiFetch<SearchResult[]>(
+    `/api/search?q=${encodeURIComponent(query)}`
+  );
+}
