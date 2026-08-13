@@ -101,6 +101,43 @@ export type ActivityImpact = {
   };
 };
 
+export type Activity = {
+  id: string;
+  process_id: string;
+  name: string;
+  description: string | null;
+  metadata: Record<string, unknown>;
+};
+
+export type GeneratedRole = {
+  name: string;
+  description: string | null;
+};
+
+export type GeneratedSkill = {
+  name: string;
+  description: string | null;
+};
+
+export type GeneratedAIOpportunity = {
+  name: string;
+  description: string | null;
+};
+
+export type GeneratedActivity = {
+  name: string;
+  description: string | null;
+  roles: GeneratedRole[];
+  skills: GeneratedSkill[];
+  ai_opportunities: GeneratedAIOpportunity[];
+};
+
+export type ProcessAnalysis = {
+  process_name: string;
+  process_description: string | null;
+  activities: GeneratedActivity[];
+};
+
 /* =========================================================
    Roles
    ========================================================= */
@@ -247,4 +284,54 @@ export async function searchGraph(
   return apiFetch<SearchResult[]>(
     `/api/search?q=${encodeURIComponent(query)}`
   );
+}
+
+/* =========================================================
+   Processes
+   ========================================================= */
+
+export async function getProcesses(): Promise<Process[]> {
+  return apiFetch<Process[]>("/api/processes");
+}
+
+export async function getProcess(id: string): Promise<Process> {
+  return apiFetch<Process>(`/api/processes/${id}`);
+}
+
+/* =========================================================
+   Activities
+   ========================================================= */
+
+export async function getActivities(): Promise<Activity[]> {
+  return apiFetch<Activity[]>("/api/activities");
+}
+
+/* =========================================================
+   Process AI Analysis
+   ========================================================= */
+
+export async function analyzeProcess(
+  id: string,
+  payload: {
+    name: string;
+    description?: string | null;
+  }
+): Promise<ProcessAnalysis> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/processes/${id}/analyze`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`AI analysis failed: ${response.status}`);
+  }
+
+  return response.json();
 }
