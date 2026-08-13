@@ -22,11 +22,23 @@ from app.api.process_activities import router as process_activities_router
 from app.api import role_processes
 from app.api import skill_roles
 from app.api import skill_processes
-
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="Process × Role × Skill Intelligence Graph API",
     version="0.1.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3002",
+        "http://localhost:3000",
+        "http://localhost:8002",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
