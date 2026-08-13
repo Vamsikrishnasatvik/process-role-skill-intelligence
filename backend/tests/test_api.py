@@ -6,6 +6,7 @@ from app.models.activity import Activity
 from app.models.process import Process
 from app.models.role import Role
 from app.models.skill import Skill
+from app.models.ai_opportunity import AIOpportunity
 
 
 client = TestClient(app)
@@ -117,13 +118,22 @@ def test_process_analysis_endpoint():
     assert data["process_name"] == "Assortment Planning"
     assert data["process_description"] is not None
 
-    assert len(data["activities"]) >= 1
+    assert len(data["activities"]) >= 4
 
     activity = data["activities"][0]
 
-    assert activity["name"] == "Analyze Assortment Planning"
+    assert activity["name"] == "Analyze Category Performance"
+
     assert len(activity["roles"]) >= 1
     assert len(activity["skills"]) >= 1
+    assert len(activity["ai_opportunities"]) >= 1
+
+    assert activity["roles"][0]["name"] == "Merchandising Analyst"
+    assert activity["skills"][0]["name"] == "Category Analytics"
+    assert (
+        activity["ai_opportunities"][0]["name"]
+        == "AI-Assisted Category Analytics"
+    )
 
 def test_process_analysis_persists_graph():
     response = client.post(
@@ -132,6 +142,8 @@ def test_process_analysis_persists_graph():
     )
 
     assert response.status_code == 200
+
+    data = response.json()
 
     db = SessionLocal()
 
@@ -144,7 +156,7 @@ def test_process_analysis_persists_graph():
             (
                 item
                 for item in process.activities
-                if item.name == "Analyze Assortment Planning"
+                if item.name == "Analyze Category Performance"
             ),
             None,
         )
@@ -155,7 +167,7 @@ def test_process_analysis_persists_graph():
             (
                 item
                 for item in activity.roles
-                if item.name == "Process Analyst"
+                if item.name == "Merchandising Analyst"
             ),
             None,
         )
@@ -166,12 +178,26 @@ def test_process_analysis_persists_graph():
             (
                 item
                 for item in role.skills
-                if item.name == "Process Analysis"
+                if item.name == "Category Analytics"
             ),
             None,
         )
 
         assert skill is not None
+
+        opportunity = next(
+            (
+                item
+                for item in activity.ai_opportunities
+                if item.name == "AI-Assisted Category Analytics"
+            ),
+            None,
+        )
+
+        assert opportunity is not None
+
+        assert role in opportunity.impacted_roles
+        assert skill in opportunity.impacted_skills
 
     finally:
         db.close()
@@ -199,7 +225,7 @@ def test_process_analysis_is_idempotent():
         matching_activities = [
             activity
             for activity in process.activities
-            if activity.name == "Analyze Assortment Planning"
+            if activity.name == "Analyze Category Performance"
         ]
 
         assert len(matching_activities) == 1
@@ -209,7 +235,7 @@ def test_process_analysis_is_idempotent():
         matching_roles = [
             role
             for role in activity.roles
-            if role.name == "Process Analyst"
+            if role.name == "Merchandising Analyst"
         ]
 
         assert len(matching_roles) == 1
@@ -219,10 +245,27 @@ def test_process_analysis_is_idempotent():
         matching_skills = [
             skill
             for skill in role.skills
-            if skill.name == "Process Analysis"
+            if skill.name == "Category Analytics"
         ]
 
         assert len(matching_skills) == 1
+
+        skill = matching_skills[0]
+
+        matching_opportunities = [
+            opportunity
+            for opportunity in activity.ai_opportunities
+            if opportunity.name == "AI-Assisted Category Analytics"
+        ]
+
+        assert len(matching_opportunities) == 1
+
+        opportunity = matching_opportunities[0]
+
+        assert opportunity.impacted_roles.count(role) == 1
+        assert opportunity.impacted_skills.count(
+            skill
+        ) == 1
 
     finally:
         db.close()
