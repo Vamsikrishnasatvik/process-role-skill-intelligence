@@ -13,6 +13,9 @@ from app.api.activity_ai_opportunities import router as activity_ai_opportunitie
 from app.api.ai_opportunity_roles import router as ai_opportunity_roles_router
 from app.api.ai_opportunity_skills import router as ai_opportunity_skills_router
 from app.api.graph import router as graph_router
+from app.api.impact import router as impact_router
+from app.api.evidence import router as evidence_router
+
 from app.api import role_processes
 from app.api import skill_roles
 from app.api import skill_processes
@@ -42,6 +45,8 @@ app.include_router(activity_ai_opportunities_router)
 app.include_router(ai_opportunity_roles_router)
 app.include_router(ai_opportunity_skills_router)
 app.include_router(graph_router)
+app.include_router(impact_router)
+app.include_router(evidence_router)
 app.include_router(role_processes.router)
 app.include_router(skill_roles.router)
 app.include_router(skill_processes.router)

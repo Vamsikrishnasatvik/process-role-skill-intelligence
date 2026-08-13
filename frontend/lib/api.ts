@@ -1,4 +1,5 @@
-const API_BASE_URL = "http://localhost:8002";
+const API_BASE_URL =
+  process.env.API_BASE_URL || "http://localhost:8002";
 
 async function apiFetch<T>(path: string): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -42,6 +43,62 @@ export type AIOpportunity = {
   name: string;
   description: string | null;
   metadata: Record<string, unknown>;
+};
+
+/* =========================================================
+   Activity Impact Types
+   ========================================================= */
+
+export type ImpactActivity = {
+  id: string;
+  name: string;
+  description: string | null;
+  metadata: Record<string, unknown>;
+};
+
+export type ImpactProcess = {
+  id: string;
+  name: string;
+  description: string | null;
+  metadata: Record<string, unknown>;
+};
+
+export type ImpactOpportunity = {
+  id: string;
+  name: string;
+  description: string | null;
+  metadata: Record<string, unknown>;
+};
+
+export type ImpactRole = {
+  id: string;
+  name: string;
+  description: string | null;
+  metadata: Record<string, unknown>;
+};
+
+export type ImpactSkill = {
+  id: string;
+  name: string;
+  description: string | null;
+  metadata: Record<string, unknown>;
+};
+
+export type ActivityImpact = {
+  activity: ImpactActivity;
+  process: ImpactProcess;
+  ai_opportunities: ImpactOpportunity[];
+  impacted_roles: ImpactRole[];
+  impacted_skills: ImpactSkill[];
+
+  impact: {
+    type: string;
+    automation_levels: string[];
+    ai_patterns: string[];
+    role_change: string;
+    skill_change: string;
+    future_change: string;
+  };
 };
 
 /* =========================================================
@@ -133,5 +190,42 @@ export async function getAIOpportunitySkills(
 ): Promise<Skill[]> {
   return apiFetch<Skill[]>(
     `/api/ai-opportunities/${id}/skills`
+  );
+}
+
+/* =========================================================
+   Activity → Impact Explorer
+   ========================================================= */
+
+export async function getActivityImpact(
+  id: string
+): Promise<ActivityImpact> {
+  return apiFetch<ActivityImpact>(
+    `/api/impact/activity/${id}`
+  );
+}
+
+/* =========================================================
+   Evidence
+   ========================================================= */
+
+export type Evidence = {
+  id: string;
+  entity_type: string;
+  entity_id: string;
+  source_title: string;
+  source_type: string;
+  snippet: string | null;
+  source_url: string | null;
+  retrieved_at: string;
+  metadata: Record<string, unknown>;
+};
+
+export async function getEvidence(
+  entityType: string,
+  entityId: string
+): Promise<Evidence[]> {
+  return apiFetch<Evidence[]>(
+    `/api/evidence/${entityType}/${entityId}`
   );
 }
