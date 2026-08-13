@@ -28,9 +28,15 @@ class AIService:
 
     def analyze_process(
         self,
+        process_name: str,
+        process_description: str | None,
         payload: ProcessAnalysisRequest,
     ) -> ProcessAnalysisResponse:
-        return self.provider.analyze_process(payload)
+        return self.provider.analyze_process(
+            process_name=process_name,
+            process_description=process_description,
+            payload=payload,
+        )
 
 
 ai_service = AIService()

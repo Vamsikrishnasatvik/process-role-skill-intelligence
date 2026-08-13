@@ -1,5 +1,6 @@
 from app.schemas.process_analysis import (
     GeneratedActivity,
+    GeneratedAIOpportunity,
     GeneratedRole,
     GeneratedSkill,
     ProcessAnalysisRequest,
@@ -18,14 +19,16 @@ class MockProvider(AIProvider):
 
     def analyze_process(
         self,
+        process_name: str,
+        process_description: str | None,
         payload: ProcessAnalysisRequest,
     ) -> ProcessAnalysisResponse:
 
         activity = GeneratedActivity(
-            name=f"Analyze {payload.name}",
+            name=f"Analyze {process_name}",
             description=(
                 f"Analyze the business activities involved in "
-                f"{payload.name.lower()}."
+                f"{process_name.lower()}."
             ),
             roles=[
                 GeneratedRole(
@@ -45,10 +48,19 @@ class MockProvider(AIProvider):
                     ),
                 )
             ],
+            ai_opportunities=[
+                GeneratedAIOpportunity(
+                    name="AI-Assisted Process Optimization",
+                    description=(
+                        "Use AI to analyze process data, identify improvement "
+                        "opportunities, and support decision-making."
+                    ),
+                )
+            ],
         )
 
         return ProcessAnalysisResponse(
-            process_name=payload.name,
-            process_description=payload.description,
+            process_name=process_name,
+            process_description=process_description,
             activities=[activity],
         )
