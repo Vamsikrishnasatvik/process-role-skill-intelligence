@@ -16,6 +16,7 @@ from app.api.graph import router as graph_router
 from app.api.impact import router as impact_router
 from app.api.evidence import router as evidence_router
 from app.api.search import router as search_router
+from app.api.process_analysis import router as process_analysis_router
 
 from app.api import role_processes
 from app.api import skill_roles
@@ -52,3 +53,4 @@ app.include_router(search_router)
 app.include_router(role_processes.router)
 app.include_router(skill_roles.router)
 app.include_router(skill_processes.router)
+app.include_router(process_analysis_router)

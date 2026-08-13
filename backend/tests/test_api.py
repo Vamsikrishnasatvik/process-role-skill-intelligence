@@ -97,3 +97,30 @@ def test_ai_opportunity():
 
     assert data["id"] == AI_OPPORTUNITY_ID
     assert data["name"] == "AI-Assisted Assortment Optimization"
+
+
+def test_process_analysis_endpoint():
+    response = client.post(
+        "/api/processes/analyze",
+        json={
+            "name": "Assortment Planning",
+            "description": "Planning the product assortment across retail channels.",
+        },
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["process_name"] == "Assortment Planning"
+    assert data["process_description"] == (
+        "Planning the product assortment across retail channels."
+    )
+
+    assert len(data["activities"]) == 1
+
+    activity = data["activities"][0]
+
+    assert activity["name"] == "Analyze Assortment Planning"
+    assert len(activity["roles"]) >= 1
+    assert len(activity["skills"]) >= 1

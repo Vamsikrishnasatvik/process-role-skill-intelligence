@@ -21,4 +21,4 @@ out/
 Thumbs.db
 
 # Docker
-*.log
+*.logbackend/.env
