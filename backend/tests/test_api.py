@@ -17,6 +17,8 @@ AI_OPPORTUNITY_ID = "d9a89ac2-4206-4db4-b847-30865b55e7e2"
 ROLE_ID = "b9c0dbe7-437a-41b7-b5a4-83e3e542e022"
 SKILL_ID = "64b6ebec-75ea-4a63-8b67-d58c0a67f5b8"
 PROCESS_ID = "f025eb56-24a9-4e9b-abc5-10735564d006"
+CATEGORY_ANALYSIS_ACTIVITY_ID = "4c315b4f-e0ee-4a98-8488-dc3570dba8aa"
+
 
 def test_health():
     response = client.get("/health")
@@ -269,3 +271,61 @@ def test_process_analysis_is_idempotent():
 
     finally:
         db.close()
+
+def test_activity_evidence_for_category_analysis():
+    response = client.get(
+        f"/api/evidence/activity/{CATEGORY_ANALYSIS_ACTIVITY_ID}"
+    )
+
+    assert response.status_code == 200
+
+    evidence = response.json()
+
+    assert len(evidence) == 2
+    assert all(
+        item["entity_type"] == "activity"
+        for item in evidence
+    )
+    assert all(
+        item["entity_id"] == CATEGORY_ANALYSIS_ACTIVITY_ID
+        for item in evidence
+    )
+
+    assert any(
+        item["source_title"]
+        == "Assortment Planning Category Analysis"
+        for item in evidence
+    )
+
+
+def test_process_analysis_not_found():
+    response = client.post(
+        "/api/processes/00000000-0000-0000-0000-000000000000/analyze",
+        json={},
+    )
+
+    assert response.status_code == 404
+
+
+def test_process_analysis_response_contains_ai_opportunities():
+    response = client.post(
+        f"/api/processes/{PROCESS_ID}/analyze",
+        json={},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    opportunities = [
+        opportunity["name"]
+        for activity in data["activities"]
+        for opportunity in activity["ai_opportunities"]
+    ]
+
+    assert len(opportunities) >= 4
+
+    assert "AI-Assisted Category Analytics" in opportunities
+    assert "AI-Assisted Assortment Optimization" in opportunities
+    assert "AI Demand Forecasting" in opportunities
+    assert "AI-Assisted Assortment Recommendation" in opportunities

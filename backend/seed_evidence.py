@@ -12,6 +12,9 @@ AI_OPPORTUNITY_ID = uuid.UUID(
     "d9a89ac2-4206-4db4-b847-30865b55e7e2"
 )
 
+CATEGORY_ANALYSIS_ACTIVITY_ID = uuid.UUID(
+    "4c315b4f-e0ee-4a98-8488-dc3570dba8aa"
+)
 
 EVIDENCE = [
     {
@@ -62,6 +65,39 @@ EVIDENCE = [
             "evidence_level": "supporting",
         },
     },
+    {
+        "entity_type": "activity",
+        "entity_id": CATEGORY_ANALYSIS_ACTIVITY_ID,
+        "source_title": "Assortment Planning Category Analysis",
+        "source_type": "internal_analysis",
+        "snippet": (
+            "Historical sales, category performance, customer demand, "
+            "and channel-level trends provide supporting information "
+            "for assortment planning decisions."
+        ),
+        "source_url": None,
+        "metadata_": {
+            "topic": "category_performance",
+            "evidence_level": "supporting",
+        },
+    },
+    {
+        "entity_type": "activity",
+        "entity_id": CATEGORY_ANALYSIS_ACTIVITY_ID,
+        "source_title": "Retail Demand and Category Performance Analysis",
+        "source_type": "business_analysis",
+        "snippet": (
+            "Category and demand analysis can help merchandising teams "
+            "identify trends, anomalies, and product demand patterns "
+            "when evaluating assortment decisions."
+        ),
+        "source_url": None,
+        "metadata_": {
+            "topic": "demand_analysis",
+            "evidence_level": "supporting",
+        },
+    },
+    
 ]
 
 
